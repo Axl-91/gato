@@ -8,12 +8,22 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var title_style = lipgloss.NewStyle().Bold(true).
+	Foreground(lipgloss.Color("#36c7aa"))
+
+var var_style = lipgloss.NewStyle().Italic(true)
+
+var status_style = lipgloss.NewStyle().Bold(true).
+	Background(lipgloss.Color("#3bcc06"))
 
 var client = http.Client{
 	Timeout: time.Duration(10 * time.Second),
@@ -48,7 +58,9 @@ var sendCmd = &cobra.Command{
 }
 
 func get_request(url string) {
-	fmt.Println("Sending Request to", url)
+	fmt.Print(title_style.Render("Sending Request to: "))
+	fmt.Print(var_style.Render(url))
+	fmt.Println()
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Println("Error on request:")
@@ -62,14 +74,20 @@ func get_request(url string) {
 	defer resp.Body.Close()
 
 	statusCode := resp.StatusCode
-	fmt.Println("STATUS CODE:", statusCode)
+	if statusCode >= 400 {
+		status_style = status_style.Background(lipgloss.Color("9"))
+	}
+	fmt.Println(
+		title_style.Render("STATUS CODE:"),
+		status_style.Render(strconv.Itoa(statusCode)),
+	)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal("Error on the request body: ", err)
 	}
 
-	fmt.Println("RESPONSE: ")
+	fmt.Println(title_style.Render("RESPONSE: "))
 	fmt.Println(string(body))
 }
 
