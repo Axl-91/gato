@@ -61,8 +61,12 @@ var sendCmd = &cobra.Command{
 }
 
 func get_request(url string) {
-	fmt.Print(title_style.Render("Sending Request to: "))
+	fmt.Println(title_style.Render("Sending Request... "))
+	fmt.Print(title_style.Render("Host: "))
 	fmt.Print(var_style.Render(url))
+	fmt.Println()
+	fmt.Print(title_style.Render("Method: "))
+	fmt.Print(var_style.Render("GET"))
 	fmt.Println()
 
 	resp, err := client.Get(url)
@@ -94,17 +98,21 @@ func get_request(url string) {
 
 	fmt.Println(title_style.Render("RESPONSE: "))
 
-	var parsed_body []map[string]string
-	_ = json.Unmarshal(body, &parsed_body)
+	var parsed_list_body []map[string]string
+	var parsed_map_body map[string]string
+	_ = json.Unmarshal(body, &parsed_list_body)
+	_ = json.Unmarshal(body, &parsed_map_body)
+
+	parsed_list_body = append(parsed_list_body, parsed_map_body)
 
 	var list_keys []string
 	var list_values [][]string
 
-	if len(parsed_body) > 0 {
-		list_keys = maps.Keys(parsed_body[0])
+	if len(parsed_list_body) > 0 {
+		list_keys = maps.Keys(parsed_list_body[0])
 	}
 
-	for _, body_map := range parsed_body {
+	for _, body_map := range parsed_list_body {
 		var list_map []string
 		for _, key := range list_keys {
 			list_map = append(list_map, body_map[key])
@@ -124,16 +132,12 @@ func create_table(list_keys []string, list_values [][]string) *table.Table {
 	t := table.New().
 		Border(lipgloss.NormalBorder()).
 		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
-		// StyleFunc(func(row, col int) lipgloss.Style {
-		// 	switch {
-		// 	case row == 0:
-		// 		return HeaderStyle
-		// 	case row%2 == 0:
-		// 		return EvenRowStyle
-		// 	default:
-		// 		return OddRowStyle
-		// 	}
-		// }).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			if row == -1 {
+				return title_style
+			}
+			return lipgloss.NewStyle()
+		}).
 		Headers(list_keys...).
 		Rows(list_values...)
 	return t
