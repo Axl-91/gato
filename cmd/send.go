@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -13,8 +14,10 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/maps"
 )
 
 var title_style = lipgloss.NewStyle().Bold(true).
@@ -26,7 +29,7 @@ var status_style = lipgloss.NewStyle().Bold(true).
 	Background(lipgloss.Color("#3bcc06"))
 
 var client = http.Client{
-	Timeout: time.Duration(10 * time.Second),
+	Timeout: time.Duration(5 * time.Second),
 }
 
 // sendCmd represents the send command
@@ -61,6 +64,7 @@ func get_request(url string) {
 	fmt.Print(title_style.Render("Sending Request to: "))
 	fmt.Print(var_style.Render(url))
 	fmt.Println()
+
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Println("Error on request:")
@@ -77,6 +81,7 @@ func get_request(url string) {
 	if statusCode >= 400 {
 		status_style = status_style.Background(lipgloss.Color("9"))
 	}
+
 	fmt.Println(
 		title_style.Render("STATUS CODE:"),
 		status_style.Render(strconv.Itoa(statusCode)),
@@ -88,22 +93,52 @@ func get_request(url string) {
 	}
 
 	fmt.Println(title_style.Render("RESPONSE: "))
-	fmt.Println(string(body))
+
+	var parsed_body []map[string]string
+	_ = json.Unmarshal(body, &parsed_body)
+
+	var list_keys []string
+	var list_values [][]string
+
+	if len(parsed_body) > 0 {
+		list_keys = maps.Keys(parsed_body[0])
+	}
+
+	for _, body_map := range parsed_body {
+		var list_map []string
+		for _, key := range list_keys {
+			list_map = append(list_map, body_map[key])
+		}
+		list_values = append(list_values, list_map)
+	}
+
+	table := create_table(list_keys, list_values)
+
+	fmt.Println(table)
 }
 
 func post_request(url string) {
-
 }
+
+func create_table(list_keys []string, list_values [][]string) *table.Table {
+	t := table.New().
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
+		// StyleFunc(func(row, col int) lipgloss.Style {
+		// 	switch {
+		// 	case row == 0:
+		// 		return HeaderStyle
+		// 	case row%2 == 0:
+		// 		return EvenRowStyle
+		// 	default:
+		// 		return OddRowStyle
+		// 	}
+		// }).
+		Headers(list_keys...).
+		Rows(list_values...)
+	return t
+}
+
 func init() {
 	rootCmd.AddCommand(sendCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// sendCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// sendCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
