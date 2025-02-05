@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -50,7 +51,13 @@ func get_request(url string) {
 	fmt.Println("Sending Request to", url)
 	resp, err := client.Get(url)
 	if err != nil {
-		log.Fatal("Error on request:", err)
+		fmt.Println("Error on request:")
+		if strings.Contains(err.Error(), "connection refused") {
+			fmt.Println("Connection Refused")
+		} else {
+			fmt.Println(err)
+		}
+		return
 	}
 	defer resp.Body.Close()
 
@@ -59,7 +66,7 @@ func get_request(url string) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("Error on the request body:", err)
+		log.Fatal("Error on the request body: ", err)
 	}
 
 	fmt.Println("RESPONSE: ")
