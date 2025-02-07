@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -27,6 +28,9 @@ var setCmd = &cobra.Command{
 			if strings.Contains(host, "localhost") {
 				host = "http://127.0.0.1"
 			}
+			if !strings.Contains(host, "http") {
+				host = "http://" + host
+			}
 			viper.GetViper().Set("host", host)
 			fmt.Println("Host changed to:", host)
 		}
@@ -39,8 +43,12 @@ var setCmd = &cobra.Command{
 			fmt.Println("Port changed to:", port)
 		}
 		if method != "" {
-			viper.GetViper().Set("method", method)
-			fmt.Println("Method changed to:", method)
+			valid_methods := []string{"GET", "POST"}
+			if slices.Contains(valid_methods, method) {
+				viper.GetViper().Set("method", method)
+				fmt.Println("Method changed to:", method)
+			}
+			fmt.Println("Invalid Method Selected")
 		}
 		if body != "" {
 			viper.GetViper().Set("body", body)

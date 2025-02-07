@@ -37,12 +37,12 @@ var sendCmd = &cobra.Command{
 	Use:   "send",
 	Short: "Send the request",
 	Long: `Send the request with the specifications selected
-		- Host (default: http://localhost.com)
-		- Dir (default: None)
-		- Port (default: 8080)
-		- Method (default: GET)
-		- Body (default: None)
-		`,
+- Host (default: http://localhost.com)
+- Dir (default: None)
+- Port (default: 8080)
+- Method (default: GET)
+- Body (default: None)
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host := viper.GetViper().GetString("host")
 		port := viper.GetViper().GetString("port")
