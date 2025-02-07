@@ -20,14 +20,6 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-var title_style = lipgloss.NewStyle().Bold(true).
-	Foreground(lipgloss.Color("#36c7aa"))
-
-var var_style = lipgloss.NewStyle().Italic(true)
-
-var status_style = lipgloss.NewStyle().Bold(true).
-	Background(lipgloss.Color("#3bcc06"))
-
 var client = http.Client{
 	Timeout: time.Duration(5 * time.Second),
 }

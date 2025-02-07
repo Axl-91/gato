@@ -32,27 +32,28 @@ var setCmd = &cobra.Command{
 				host = "http://" + host
 			}
 			viper.GetViper().Set("host", host)
-			fmt.Println("Host changed to:", host)
+			fmt.Println(title_style.Render("Host changed to:"), host)
 		}
 		if dir != "" {
 			viper.GetViper().Set("dir", dir)
-			fmt.Println("Dir changed to:", dir)
+			fmt.Println(title_style.Render("Dir changed to:"), dir)
 		}
 		if port >= 0 {
 			viper.GetViper().Set("port", port)
-			fmt.Println("Port changed to:", port)
+			fmt.Println(title_style.Render("Port changed to:"), port)
 		}
 		if method != "" {
 			valid_methods := []string{"GET", "POST"}
 			if slices.Contains(valid_methods, method) {
 				viper.GetViper().Set("method", method)
-				fmt.Println("Method changed to:", method)
+				fmt.Println(title_style.Render("Method changed to:"), method)
+			} else {
+				fmt.Println(error_style.Render("Invalid Method Selected"))
 			}
-			fmt.Println("Invalid Method Selected")
 		}
 		if body != "" {
 			viper.GetViper().Set("body", body)
-			fmt.Println("Body changed to:", body)
+			fmt.Println(title_style.Render("Body changed to:"), body)
 		}
 		_ = viper.GetViper().WriteConfig()
 	},

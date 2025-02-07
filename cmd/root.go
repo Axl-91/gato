@@ -6,11 +6,23 @@ package cmd
 import (
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string = "gato.yaml"
+
+var title_style = lipgloss.NewStyle().Bold(true).
+	Foreground(lipgloss.Color("#36c7aa"))
+
+var var_style = lipgloss.NewStyle().Italic(true)
+
+var error_style = lipgloss.NewStyle().Bold(true).
+	Foreground(lipgloss.Color("9"))
+
+var status_style = lipgloss.NewStyle().Bold(true).
+	Background(lipgloss.Color("#3bcc06"))
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
