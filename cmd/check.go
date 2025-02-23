@@ -18,22 +18,19 @@ var checkCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(title_style.Render("Host:"), viper.GetViper().GetString("host"))
 		fmt.Println(title_style.Render("Port:"), viper.GetViper().GetInt("port"))
-		fmt.Println(title_style.Render("Dir:"), viper.GetViper().GetString("dir"))
+		fmt.Println(title_style.Render("Dir:"), value_or_none(viper.GetViper().GetString("dir")))
 		fmt.Println(title_style.Render("Method:"), viper.GetViper().GetString("method"))
-		fmt.Println(title_style.Render("Body:"), viper.GetViper().GetString("body"))
+		fmt.Println(title_style.Render("Body:"), value_or_none(viper.GetViper().GetString("body")))
 	},
+}
+
+func value_or_none(value string) string {
+	if value == "" {
+		return "None"
+	}
+	return value
 }
 
 func init() {
 	rootCmd.AddCommand(checkCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// checkCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// checkCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
