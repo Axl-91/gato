@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 Axel Aparicio
 */
 package cmd
 
@@ -24,18 +24,12 @@ var error_style = lipgloss.NewStyle().Bold(true).
 var status_style = lipgloss.NewStyle().Bold(true).
 	Background(lipgloss.Color("#3bcc06"))
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gato",
-	Short: "Gato CLI is a request application similar to cURL",
-	Long:  `Gato CLI is a request application similar to cURL`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Gato is an HTTP request client CLI similar to cURL",
+	Long:  `Gato is an HTTP request client CLI similar to cURL`,
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -45,17 +39,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	viper.SetConfigFile(cfgFile)
 

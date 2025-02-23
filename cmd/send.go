@@ -4,11 +4,13 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -37,31 +39,59 @@ var sendCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		host := viper.GetViper().GetString("host")
-		port := viper.GetViper().GetString("port")
 		dir := viper.GetViper().GetString("dir")
+		port := viper.GetViper().GetString("port")
+		method := viper.GetViper().GetString("method")
+		body := viper.GetViper().GetString("body")
 
 		url := host + ":" + port + "/" + dir
-		method := viper.GetViper().GetString("method")
+		fmt.Println(title_style.Render("Sending Request... "))
+		fmt.Print(title_style.Render("Host: "))
+		fmt.Print(var_style.Render(url))
+		fmt.Println()
 
 		switch method {
 		case "GET":
 			get_request(url)
 		case "POST":
-			post_request(url)
+			post_request(url, body)
 		}
 	},
 }
 
 func get_request(url string) {
-	fmt.Println(title_style.Render("Sending Request... "))
-	fmt.Print(title_style.Render("Host: "))
-	fmt.Print(var_style.Render(url))
-	fmt.Println()
 	fmt.Print(title_style.Render("Method: "))
 	fmt.Print(var_style.Render("GET"))
 	fmt.Println()
 
 	resp, err := client.Get(url)
+	show_error_message(err)
+
+	defer resp.Body.Close()
+
+	show_parsed_response(resp)
+}
+
+func post_request(url_string string, body_json string) {
+	fmt.Print(title_style.Render("Method: "))
+	fmt.Print(var_style.Render("GET"))
+	fmt.Println()
+
+	// Read the json file to use it as a body for the POST request
+	body, err := os.ReadFile(body_json)
+	if err != nil {
+		log.Fatal("Error trying to read json body:", err)
+	}
+	resp, err := client.Post(url_string, "application/json", bytes.NewBuffer(body))
+
+	show_error_message(err)
+
+	defer resp.Body.Close()
+
+	show_parsed_response(resp)
+}
+
+func show_error_message(err error) {
 	if err != nil {
 		fmt.Println("Error on request:")
 		if strings.Contains(err.Error(), "connection refused") {
@@ -71,23 +101,31 @@ func get_request(url string) {
 		}
 		return
 	}
-	defer resp.Body.Close()
+}
 
-	statusCode := resp.StatusCode
-	if statusCode >= 400 {
+func show_parsed_response(response *http.Response) {
+	show_status_code(response.StatusCode)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal("Error on the request body: ", err)
+	}
+
+	show_table_response(body)
+}
+
+func show_status_code(status_code int) {
+	if status_code >= 400 {
 		status_style = status_style.Background(lipgloss.Color("9"))
 	}
 
 	fmt.Println(
 		title_style.Render("STATUS CODE:"),
-		status_style.Render(strconv.Itoa(statusCode)),
+		status_style.Render(strconv.Itoa(status_code)),
 	)
+}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal("Error on the request body: ", err)
-	}
-
+func show_table_response(body []byte) {
 	fmt.Println(title_style.Render("RESPONSE: "))
 
 	var parsed_list_body []map[string]string
@@ -115,9 +153,6 @@ func get_request(url string) {
 	table := create_table(list_keys, list_values)
 
 	fmt.Println(table)
-}
-
-func post_request(url string) {
 }
 
 func create_table(list_keys []string, list_values [][]string) *table.Table {
