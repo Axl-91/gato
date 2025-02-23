@@ -12,6 +12,7 @@ HTTP Client on terminal, only for requests and responses in JSON
 - [ ] Read file for json body
 - [ ] POST request
 - [ ] Open values directly from yaml
+- [ ] Add tests
 
 ## Commands
 ### Set:
