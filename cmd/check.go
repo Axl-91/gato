@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -14,13 +11,13 @@ import (
 var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Show all the values for the request",
-	Long:  `Show all the values (Host, Port, Dir, Method and Body) for the request`,
+	Long:  `Show all the values (Host, Port, Path, Method and Body) for the request`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(title_style.Render("Host:"), viper.GetViper().GetString("host"))
-		fmt.Println(title_style.Render("Port:"), viper.GetViper().GetInt("port"))
-		fmt.Println(title_style.Render("Dir:"), value_or_none(viper.GetViper().GetString("dir")))
-		fmt.Println(title_style.Render("Method:"), viper.GetViper().GetString("method"))
-		fmt.Println(title_style.Render("Body:"), value_or_none(viper.GetViper().GetString("body")))
+		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Host:"), viper.GetViper().GetString("host"))
+		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %d \n", title_style.Render("Port:"), viper.GetViper().GetInt("port"))
+		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Path:"), value_or_none(viper.GetViper().GetString("path")))
+		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Method:"), viper.GetViper().GetString("method"))
+		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Body:"), value_or_none(viper.GetViper().GetString("body")))
 	},
 }
 
