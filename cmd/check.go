@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -13,15 +14,24 @@ var checkCmd = &cobra.Command{
 	Short: "Show all the values for the request",
 	Long:  `Show all the values (Host, Port, Path, Method and Body) for the request`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Host:"), viper.GetViper().GetString("host"))
-		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %d \n", title_style.Render("Port:"), viper.GetViper().GetInt("port"))
-		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Path:"), value_or_none(viper.GetViper().GetString("path")))
-		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Method:"), viper.GetViper().GetString("method"))
-		fmt.Fprintf(rootCmd.OutOrStdout(), "%s %s \n", title_style.Render("Body:"), value_or_none(viper.GetViper().GetString("body")))
+		port_str := strconv.Itoa(viper.GetViper().GetInt("port"))
+
+		printValue("Host:", viper.GetViper().GetString("host"))
+		printValue("Port:", port_str)
+		printValue("Path:", viper.GetViper().GetString("path"))
+		printValue("Method:", viper.GetViper().GetString("method"))
+		printValue("Body:", viper.GetViper().GetString("body"))
 	},
 }
 
-func value_or_none(value string) string {
+func printValue(name string, value string) {
+	output := rootCmd.OutOrStdout()
+	name_formatted := title_style.Render(name)
+
+	fmt.Fprintf(output, "%s %s\n", name_formatted, valueOrNone(value))
+}
+
+func valueOrNone(value string) string {
 	if value == "" {
 		return "None"
 	}
