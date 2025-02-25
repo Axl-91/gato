@@ -125,8 +125,8 @@ func show_status_code(status_code int) {
 func show_table_response(body []byte) {
 	fmt.Println(title_style.Render("RESPONSE: "))
 
-	var parsed_list_body []map[string]string
-	var parsed_map_body map[string]string
+	var parsed_list_body []map[string]interface{}
+	var parsed_map_body map[string]interface{}
 	_ = json.Unmarshal(body, &parsed_list_body)
 	_ = json.Unmarshal(body, &parsed_map_body)
 
@@ -140,9 +140,13 @@ func show_table_response(body []byte) {
 	}
 
 	for _, body_map := range parsed_list_body {
+		if len(body_map) == 0 {
+			break
+		}
 		var list_map []string
 		for _, key := range list_keys {
-			list_map = append(list_map, body_map[key])
+			value_string := get_value_string(body_map[key])
+			list_map = append(list_map, value_string)
 		}
 		list_values = append(list_values, list_map)
 	}
@@ -165,6 +169,17 @@ func create_table(list_keys []string, list_values [][]string) *table.Table {
 		Headers(list_keys...).
 		Rows(list_values...)
 	return t
+}
+
+func get_value_string(value interface{}) string {
+	switch v := value.(type) {
+	case bool:
+		return fmt.Sprintf("%t", v)
+	case int, int64, float64:
+		return fmt.Sprintf("%v", v)
+	default:
+		return fmt.Sprintf("%s", v)
+	}
 }
 
 func init() {
