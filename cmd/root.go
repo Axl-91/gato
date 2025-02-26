@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
@@ -10,16 +12,16 @@ import (
 
 var cfgFile string = "gato.yaml"
 
-var title_style = lipgloss.NewStyle().Bold(true).
+// Style for titles
+var titleStyle = lipgloss.NewStyle().Bold(true).
 	Foreground(lipgloss.Color("#36c7aa"))
 
-var var_style = lipgloss.NewStyle().Italic(true)
-
-var error_style = lipgloss.NewStyle().Bold(true).
+// Style for error messages
+var errorStyle = lipgloss.NewStyle().Bold(true).
 	Foreground(lipgloss.Color("9"))
 
-var status_style = lipgloss.NewStyle().Bold(true).
-	Background(lipgloss.Color("#3bcc06"))
+// Style to show status (default: background green)
+var statusStyle = lipgloss.NewStyle().Bold(true)
 
 var rootCmd = &cobra.Command{
 	Use:   "gato",
@@ -42,4 +44,50 @@ func initConfig() {
 	viper.SetConfigFile(cfgFile)
 
 	_ = viper.ReadInConfig()
+}
+
+func printValue(name string, value string) {
+	output := rootCmd.OutOrStdout()
+	nameFormatted := titleStyle.Render(name)
+
+	fmt.Fprintf(output, "%s %s\n", nameFormatted, valueOrNone(value))
+}
+
+func valueOrNone(value string) string {
+	if value == "" {
+		return "None"
+	}
+	return value
+}
+
+func setStatusCodeStyle(statusCode int) {
+	if statusCode >= 400 {
+		statusStyle = statusStyle.Background(lipgloss.Color("9"))
+	} else {
+		statusStyle = statusStyle.Background(lipgloss.Color("#3bcc06"))
+
+	}
+}
+
+func getValueString(value interface{}) string {
+	switch v := value.(type) {
+	case bool:
+		return fmt.Sprintf("%t", v)
+	case int, int64, float64:
+		return fmt.Sprintf("%v", v)
+	default:
+		return fmt.Sprintf("%s", v)
+	}
+}
+
+func showErrorMsg(err error) {
+	if err != nil {
+		fmt.Println("Error on request:")
+		if strings.Contains(err.Error(), "connection refused") {
+			fmt.Println("Connection Refused")
+		} else {
+			fmt.Println(err)
+		}
+		return
+	}
 }

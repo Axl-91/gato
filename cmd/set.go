@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -28,28 +29,29 @@ var setCmd = &cobra.Command{
 				host = "http://" + host
 			}
 			viper.GetViper().Set("host", host)
-			fmt.Println(title_style.Render("Host changed to:"), host)
+			printValue("Host changed to:", host)
 		}
 		if path != "" {
 			viper.GetViper().Set("path", path)
-			fmt.Println(title_style.Render("Path changed to:"), path)
+			printValue("Path changed to:", path)
 		}
 		if port >= 0 {
 			viper.GetViper().Set("port", port)
-			fmt.Println(title_style.Render("Port changed to:"), port)
+			portStr := strconv.Itoa(int(port))
+			printValue("Port changed to:", portStr)
 		}
 		if method != "" {
-			valid_methods := []string{"GET", "POST"}
-			if slices.Contains(valid_methods, method) {
+			validMethods := []string{"GET", "POST"}
+			if slices.Contains(validMethods, method) {
 				viper.GetViper().Set("method", method)
-				fmt.Println(title_style.Render("Method changed to:"), method)
+				printValue("Method changed to:", method)
 			} else {
-				fmt.Println(error_style.Render("Invalid Method Selected"))
+				fmt.Sprintln(errorStyle.Render("Invalid Method Selected"))
 			}
 		}
 		if body != "" {
 			viper.GetViper().Set("body", body)
-			fmt.Println(title_style.Render("Body changed to:"), body)
+			printValue("Body changed to:", body)
 		}
 		_ = viper.GetViper().WriteConfig()
 	},

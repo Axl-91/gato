@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
@@ -42,144 +41,113 @@ var sendCmd = &cobra.Command{
 		body := viper.GetViper().GetString("body")
 
 		url := host + ":" + port + "/" + path
-		fmt.Println(title_style.Render("Sending Request... "))
-		fmt.Print(title_style.Render("Host: "))
-		fmt.Print(var_style.Render(url))
-		fmt.Println()
+		printValue("URL:", url)
 
 		switch method {
 		case "GET":
-			get_request(url)
+			getRequest(url)
 		case "POST":
-			post_request(url, body)
+			postRequest(url, body)
 		}
 	},
 }
 
-func get_request(url string) {
-	fmt.Print(title_style.Render("Method: "))
-	fmt.Print(var_style.Render("GET"))
-	fmt.Println()
+func getRequest(url string) {
+	printValue("Method:", "GET")
 
 	resp, err := client.Get(url)
-	show_error_message(err)
+	showErrorMsg(err)
 
 	defer resp.Body.Close()
 
-	show_parsed_response(resp)
+	showParsedResp(resp)
 }
 
-func post_request(url_string string, body_json string) {
-	fmt.Print(title_style.Render("Method: "))
-	fmt.Print(var_style.Render("GET"))
-	fmt.Println()
+func postRequest(urlString string, bodyJson string) {
+	printValue("Method:", "POST")
 
 	// Read the json file to use it as a body for the POST request
-	body, err := os.ReadFile(body_json)
+	body, err := os.ReadFile(bodyJson)
 	if err != nil {
 		log.Fatal("Error trying to read json body:", err)
 	}
-	resp, err := client.Post(url_string, "application/json", bytes.NewBuffer(body))
+	resp, err := client.Post(urlString, "application/json", bytes.NewBuffer(body))
 
-	show_error_message(err)
+	showErrorMsg(err)
 
 	defer resp.Body.Close()
 
-	show_parsed_response(resp)
+	showParsedResp(resp)
 }
 
-func show_error_message(err error) {
-	if err != nil {
-		fmt.Println("Error on request:")
-		if strings.Contains(err.Error(), "connection refused") {
-			fmt.Println("Connection Refused")
-		} else {
-			fmt.Println(err)
-		}
-		return
-	}
-}
-
-func show_parsed_response(response *http.Response) {
-	show_status_code(response.StatusCode)
+func showParsedResp(response *http.Response) {
+	showStatusCode(response.StatusCode)
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Fatal("Error on the request body: ", err)
 	}
 
-	show_table_response(body)
+	showTableResp(body)
 }
 
-func show_status_code(status_code int) {
-	if status_code >= 400 {
-		status_style = status_style.Background(lipgloss.Color("9"))
-	}
+func showStatusCode(statusCode int) {
+	setStatusCodeStyle(statusCode)
 
-	fmt.Println(
-		title_style.Render("STATUS CODE:"),
-		status_style.Render(strconv.Itoa(status_code)),
-	)
+	statusCodeStr := strconv.Itoa(statusCode)
+
+	printValue("STATUS CODE:", statusStyle.Render(statusCodeStr))
 }
 
-func show_table_response(body []byte) {
-	fmt.Println(title_style.Render("RESPONSE: "))
+func showTableResp(body []byte) {
+	// listBody will be used to retrieve response if is a list
+	var listBody []map[string]interface{}
 
-	var parsed_list_body []map[string]interface{}
-	var parsed_map_body map[string]interface{}
-	_ = json.Unmarshal(body, &parsed_list_body)
-	_ = json.Unmarshal(body, &parsed_map_body)
+	// mapBody will be used to retrieve response if is an unique response
+	var mapBody map[string]interface{}
 
-	parsed_list_body = append(parsed_list_body, parsed_map_body)
+	_ = json.Unmarshal(body, &listBody)
+	_ = json.Unmarshal(body, &mapBody)
 
-	var list_keys []string
-	var list_values [][]string
+	listBody = append(listBody, mapBody)
 
-	if len(parsed_list_body) > 0 {
-		list_keys = maps.Keys(parsed_list_body[0])
+	var listKeys []string
+	var listValues [][]string
+
+	if len(listBody) > 0 {
+		listKeys = maps.Keys(listBody[0])
 	}
 
-	for _, body_map := range parsed_list_body {
-		if len(body_map) == 0 {
+	for _, bodyMap := range listBody {
+		if len(bodyMap) == 0 {
 			break
 		}
-		var list_map []string
-		for _, key := range list_keys {
-			value_string := get_value_string(body_map[key])
-			list_map = append(list_map, value_string)
+		var listMap []string
+		for _, key := range listKeys {
+			valueString := getValueString(bodyMap[key])
+			listMap = append(listMap, valueString)
 		}
-		list_values = append(list_values, list_map)
+		listValues = append(listValues, listMap)
 	}
 
-	table := create_table(list_keys, list_values)
+	table := createTable(listKeys, listValues)
 
 	fmt.Println(table)
 }
 
-func create_table(list_keys []string, list_values [][]string) *table.Table {
+func createTable(listKeys []string, listValues [][]string) *table.Table {
 	t := table.New().
 		Border(lipgloss.NormalBorder()).
 		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == -1 {
-				return title_style
+				return titleStyle
 			}
 			return lipgloss.NewStyle()
 		}).
-		Headers(list_keys...).
-		Rows(list_values...)
+		Headers(listKeys...).
+		Rows(listValues...)
 	return t
-}
-
-func get_value_string(value interface{}) string {
-	switch v := value.(type) {
-	case bool:
-		return fmt.Sprintf("%t", v)
-	case int, int64, float64:
-		return fmt.Sprintf("%v", v)
-	default:
-		return fmt.Sprintf("%s", v)
-	}
 }
 
 func init() {
