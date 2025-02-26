@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
@@ -56,7 +56,12 @@ func getRequest(url string) {
 	printValue("Method:", "GET")
 
 	resp, err := client.Get(url)
-	showErrorMsg(err)
+
+	if err != nil {
+		errorMsg := fmt.Sprintf("Request error: %s", err)
+		showRequestErrorMsg(errorMsg)
+		return
+	}
 
 	defer resp.Body.Close()
 
@@ -69,11 +74,15 @@ func postRequest(urlString string, bodyJson string) {
 	// Read the json file to use it as a body for the POST request
 	body, err := os.ReadFile(bodyJson)
 	if err != nil {
-		log.Fatal("Error trying to read json body:", err)
+		errorMsg := fmt.Sprintf("Json parse error: %v", err)
+		showRequestErrorMsg(errorMsg)
 	}
 	resp, err := client.Post(urlString, "application/json", bytes.NewBuffer(body))
 
-	showErrorMsg(err)
+	if err != nil {
+		showRequestErrorMsg(err.Error())
+		return
+	}
 
 	defer resp.Body.Close()
 
@@ -85,7 +94,8 @@ func showParsedResp(response *http.Response) {
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal("Error on the request body: ", err)
+		errorMsg := fmt.Sprintf("Body parse error: %s", err)
+		showRequestErrorMsg(errorMsg)
 	}
 
 	showTableResp(body)
@@ -148,6 +158,16 @@ func createTable(listKeys []string, listValues [][]string) *table.Table {
 		Headers(listKeys...).
 		Rows(listValues...)
 	return t
+}
+
+func showRequestErrorMsg(errorMsg string) {
+	if strings.Contains(errorMsg, "connection refused") {
+		errorMsg = errorStyle.Render("Request Error: Connection Refused")
+		fmt.Fprintln(rootCmd.ErrOrStderr(), errorMsg)
+	} else {
+		errorMsg = errorStyle.Render(errorMsg)
+		fmt.Fprintln(rootCmd.ErrOrStderr(), errorMsg)
+	}
 }
 
 func init() {

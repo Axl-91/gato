@@ -46,7 +46,9 @@ var setCmd = &cobra.Command{
 				viper.GetViper().Set("method", method)
 				printValue("Method changed to:", method)
 			} else {
-				fmt.Sprintln(errorStyle.Render("Invalid Method Selected"))
+				errorMsg := fmt.Sprintf("Invalid method selected: expected [%s], got %s", strings.Join(validMethods, ", "), method)
+				errorFormatted := errorStyle.Render(errorMsg)
+				fmt.Fprintf(rootCmd.ErrOrStderr(), "%s\n", errorFormatted)
 			}
 		}
 		if body != "" {

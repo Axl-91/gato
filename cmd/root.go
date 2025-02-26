@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
@@ -77,17 +76,5 @@ func getValueString(value interface{}) string {
 		return fmt.Sprintf("%v", v)
 	default:
 		return fmt.Sprintf("%s", v)
-	}
-}
-
-func showErrorMsg(err error) {
-	if err != nil {
-		fmt.Println("Error on request:")
-		if strings.Contains(err.Error(), "connection refused") {
-			fmt.Println("Connection Refused")
-		} else {
-			fmt.Println(err)
-		}
-		return
 	}
 }
