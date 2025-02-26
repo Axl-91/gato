@@ -40,6 +40,9 @@ Send request
 ## Example:
 
 ```
-gato set -H localhost.com -P 8080 -M GET -B body.json
+gato set -H localhost.com -D api/todos -P 4000 -M GET -B body.json
 gato send
 ```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1cfcb045-b4da-4546-9ce9-4d9a638be93c", alt="Response" />
+</p>
