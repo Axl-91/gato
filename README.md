@@ -18,7 +18,7 @@ HTTP Client on terminal, only for requests and responses in JSON
 
 ## Commands
 ### Set:
-Set the values needed for the request, this are:
+Set the values needed for the HTTP request, this values are:
 
 - **Host (-H)** The host, default: localhost
 
@@ -31,23 +31,31 @@ Set the values needed for the request, this are:
 - **Body (-B)** File to use as json body, default None
 
 ### Check:
-Show the values that were setted
+Displays the current values of the HTTP request.
+
+If used without arguments, it lists all set values, if a specific parameter name is provided as an argument, it returns only the value for that parameter.
 
 ### Clear:
-Clear values that were setted and return all to the default settings.
+Restore the values of the HTTP request to the values of the default.yaml provided.
+
+If used without arguments, it restore all set values, if a specific parameter name is provided as an argument, it restore only the value for that parameter.
+
 
 ### Send:
-Send request
+Send the HTTP request with the values that were set.
 
-## gato.yaml
-We'll use this file to store the values for requests
+## gato.yaml / default.yaml
+We'll use gato.yaml to save the values that were set for the HTTP requests.
 
-```
-host: 
-path: 
+We'll use default.yaml to have the default parameters set in case we need to clear data.
+
+default.yaml 
+``` yaml
+host: http://127.0.0.1
+path:
+port: 8000
+method: GET
 body:
-method: 
-port: 
 ```
 
 ## Example:
