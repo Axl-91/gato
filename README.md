@@ -37,6 +37,17 @@ Clear values that were setted and return all to the default settings.
 ### Send:
 Send request
 
+## gato.yaml
+We'll use this file to store the values for requests
+
+```
+host: 
+path: 
+body:
+method: 
+port: 
+```
+
 ## Example:
 
 ```
