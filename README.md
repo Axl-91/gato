@@ -11,7 +11,9 @@ HTTP Client on terminal, only for requests and responses in JSON
 - [x] Clear values
 - [x] Read file for json body
 - [ ] POST request
-- [ ] Open values directly from yaml
+- [ ] Add Authentication
+- [ ] Refactor commands
+- [ ] Add command to get values directly from yaml file
 - [ ] Add tests for every command
 
 ## Commands
