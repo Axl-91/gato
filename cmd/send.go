@@ -71,12 +71,13 @@ func getRequest(url string) {
 func postRequest(urlString string, bodyJson string) {
 	printTitledValue("Method:", "POST")
 
-	// Read the json file to use it as a body for the POST request
-	jsonData, err := os.ReadFile(bodyJson)
+	jsonData, err := getJsonData(bodyJson)
 	if err != nil {
 		errorMsg := fmt.Sprintf("Json parse error: %v", err)
 		showRequestErrorMsg(errorMsg)
+		return
 	}
+
 	resp, err :=
 		client.Post(urlString, "application/json", bytes.NewBuffer(jsonData))
 
@@ -88,6 +89,14 @@ func postRequest(urlString string, bodyJson string) {
 	defer resp.Body.Close()
 
 	showParsedResp(resp)
+}
+
+func getJsonData(bodyJson string) ([]byte, error) {
+	if bodyJson == "" {
+		return []byte{}, nil
+	}
+	return os.ReadFile(bodyJson)
+
 }
 
 func showParsedResp(response *http.Response) {
