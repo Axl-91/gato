@@ -67,5 +67,5 @@ func init() {
 	setCmd.Flags().Int16VarP(&port, "port", "P", -1, "Set port number")
 	setCmd.Flags().StringVarP(&method, "method", "M", "", "Set request method")
 	setCmd.Flags().StringVarP(&body, "body", "B", "", "Set body (json)")
-	setCmd.MarkFlagsOneRequired("host", "port", "method", "body")
+	setCmd.MarkFlagsOneRequired("host", "path", "port", "method", "body")
 }

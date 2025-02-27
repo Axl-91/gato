@@ -72,12 +72,13 @@ func postRequest(urlString string, bodyJson string) {
 	printValue("Method:", "POST")
 
 	// Read the json file to use it as a body for the POST request
-	body, err := os.ReadFile(bodyJson)
+	jsonData, err := os.ReadFile(bodyJson)
 	if err != nil {
 		errorMsg := fmt.Sprintf("Json parse error: %v", err)
 		showRequestErrorMsg(errorMsg)
 	}
-	resp, err := client.Post(urlString, "application/json", bytes.NewBuffer(body))
+	resp, err :=
+		client.Post(urlString, "application/json", bytes.NewBuffer(jsonData))
 
 	if err != nil {
 		showRequestErrorMsg(err.Error())
@@ -98,7 +99,12 @@ func showParsedResp(response *http.Response) {
 		showRequestErrorMsg(errorMsg)
 	}
 
-	showTableResp(body)
+	if response.StatusCode >= 300 {
+		fmt.Fprintln(rootCmd.ErrOrStderr(), string(body))
+	} else {
+		showTableResp(body)
+	}
+
 }
 
 func showStatusCode(statusCode int) {
