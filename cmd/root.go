@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
@@ -45,7 +46,7 @@ func initConfig() {
 	_ = viper.ReadInConfig()
 }
 
-func printValue(name string, value string) {
+func printTitledValue(name string, value string) {
 	output := rootCmd.OutOrStdout()
 	nameFormatted := titleStyle.Render(name)
 
@@ -76,5 +77,13 @@ func getValueString(value interface{}) string {
 		return fmt.Sprintf("%v", v)
 	default:
 		return fmt.Sprintf("%s", v)
+	}
+}
+
+func extractParameter(args []string) string {
+	if len(args) == 0 {
+		return ""
+	} else {
+		return strings.ToLower(args[0])
 	}
 }

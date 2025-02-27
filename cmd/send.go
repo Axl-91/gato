@@ -41,7 +41,7 @@ var sendCmd = &cobra.Command{
 		body := viper.GetViper().GetString("body")
 
 		url := host + ":" + port + "/" + path
-		printValue("URL:", url)
+		printTitledValue("URL:", url)
 
 		switch method {
 		case "GET":
@@ -53,7 +53,7 @@ var sendCmd = &cobra.Command{
 }
 
 func getRequest(url string) {
-	printValue("Method:", "GET")
+	printTitledValue("Method:", "GET")
 
 	resp, err := client.Get(url)
 
@@ -69,7 +69,7 @@ func getRequest(url string) {
 }
 
 func postRequest(urlString string, bodyJson string) {
-	printValue("Method:", "POST")
+	printTitledValue("Method:", "POST")
 
 	// Read the json file to use it as a body for the POST request
 	jsonData, err := os.ReadFile(bodyJson)
@@ -112,7 +112,7 @@ func showStatusCode(statusCode int) {
 
 	statusCodeStr := strconv.Itoa(statusCode)
 
-	printValue("STATUS CODE:", statusStyle.Render(statusCodeStr))
+	printTitledValue("STATUS CODE:", statusStyle.Render(statusCodeStr))
 }
 
 func showTableResp(body []byte) {

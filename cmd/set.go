@@ -29,22 +29,22 @@ var setCmd = &cobra.Command{
 				host = "http://" + host
 			}
 			viper.GetViper().Set("host", host)
-			printValue("Host changed to:", host)
+			printTitledValue("Host changed to:", host)
 		}
 		if path != "" {
 			viper.GetViper().Set("path", path)
-			printValue("Path changed to:", path)
+			printTitledValue("Path changed to:", path)
 		}
 		if port >= 0 {
 			viper.GetViper().Set("port", port)
 			portStr := strconv.Itoa(int(port))
-			printValue("Port changed to:", portStr)
+			printTitledValue("Port changed to:", portStr)
 		}
 		if method != "" {
 			validMethods := []string{"GET", "POST"}
 			if slices.Contains(validMethods, method) {
 				viper.GetViper().Set("method", method)
-				printValue("Method changed to:", method)
+				printTitledValue("Method changed to:", method)
 			} else {
 				errorMsg := fmt.Sprintf("Invalid method selected: expected [%s], got %s", strings.Join(validMethods, ", "), method)
 				errorFormatted := errorStyle.Render(errorMsg)
@@ -53,7 +53,7 @@ var setCmd = &cobra.Command{
 		}
 		if body != "" {
 			viper.GetViper().Set("body", body)
-			printValue("Body changed to:", body)
+			printTitledValue("Body changed to:", body)
 		}
 		_ = viper.GetViper().WriteConfig()
 	},
