@@ -9,7 +9,7 @@ HTTP Client on terminal, only for requests and responses in JSON
 - [x] Better format for response
 - [x] Show values (check command)
 - [x] Clear values
-- [ ] Read file for json body
+- [x] Read file for json body
 - [ ] POST request
 - [ ] Open values directly from yaml
 - [ ] Add tests for every command
