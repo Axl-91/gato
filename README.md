@@ -44,18 +44,31 @@ If used without arguments, it restore all set values, if a specific parameter na
 ### Send:
 Send the HTTP request with the values that were set.
 
-## gato.yaml / default.yaml
+## Files
+
+### gato.yaml
 We'll use gato.yaml to save the values that were set for the HTTP requests.
+
+``` yaml
+host: 
+path:
+port: 
+method:
+body:
+```
+
+### default.yaml
 
 We'll use default.yaml to have the default parameters set in case we need to clear data.
 
-default.yaml 
-``` yaml
-host: http://127.0.0.1
-path:
-port: 8000
-method: GET
-body:
+``` json
+{
+  "host":"http://127.0.0.1",
+  "path":"",
+  "port":8000,
+  "method":"GET",
+  "body":""
+}
 ```
 
 ## Example:
