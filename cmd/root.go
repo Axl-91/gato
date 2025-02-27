@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -11,6 +12,16 @@ import (
 )
 
 var cfgFile string = "gato.yaml"
+
+type defaultJson struct {
+	Host   string `json:"host"`
+	Path   string `json:"path"`
+	Port   int32  `json:"port"`
+	Method string `json:"method"`
+	Body   string `json:"body"`
+}
+
+var defaultValues = defaultJson{}
 
 // Style for titles
 var titleStyle = lipgloss.NewStyle().Bold(true).
@@ -41,9 +52,32 @@ func init() {
 }
 
 func initConfig() {
+	err := parseJsonDefault()
+	if err != nil {
+		os.Exit(1)
+	}
 	viper.SetConfigFile(cfgFile)
 
 	_ = viper.ReadInConfig()
+}
+
+func parseJsonDefault() error {
+	file, err := os.Open("default.json")
+	if err != nil {
+		errorMsg := fmt.Sprintf(errorStyle.Render("Error opening default JSON file: %v"), err)
+		fmt.Fprintln(rootCmd.OutOrStderr(), errorMsg)
+		return err
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&defaultValues)
+	if err != nil {
+		errorMsg := fmt.Sprintf(errorStyle.Render("Error decoding JSON file: %v"), err)
+		fmt.Fprintln(rootCmd.OutOrStderr(), errorMsg)
+		return err
+	}
+	return nil
 }
 
 func printTitledValue(name string, value string) {

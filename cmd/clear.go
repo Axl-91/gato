@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -25,20 +26,21 @@ var clearCmd = &cobra.Command{
 func clearValues(parameter string) {
 	switch parameter {
 	case "host":
-		viper.GetViper().Set("host", "http://127.0.0.1")
-		printTitledValue("host cleared to:", "http://127.0.0.1")
+		viper.GetViper().Set("host", defaultValues.Host)
+		printTitledValue("Host cleared to:", defaultValues.Host)
 	case "port":
-		viper.GetViper().Set("port", 8000)
-		printTitledValue("port cleared to:", "8000")
+		viper.GetViper().Set("port", defaultValues.Port)
+		portStr := strconv.Itoa(int(defaultValues.Port))
+		printTitledValue("Port cleared to:", portStr)
 	case "path":
-		viper.GetViper().Set("path", "")
-		printTitledValue("path cleared to:", "")
+		viper.GetViper().Set("path", defaultValues.Path)
+		printTitledValue("Path cleared to:", defaultValues.Path)
 	case "method":
-		viper.GetViper().Set("method", "GET")
-		printTitledValue("method cleared to:", "GET")
+		viper.GetViper().Set("method", defaultValues.Method)
+		printTitledValue("Method cleared to:", defaultValues.Method)
 	case "body":
-		viper.GetViper().Set("body", "")
-		printTitledValue("body cleared to:", "")
+		viper.GetViper().Set("body", defaultValues.Body)
+		printTitledValue("Body cleared to:", defaultValues.Body)
 	case "":
 		clearAllValues()
 	}
@@ -46,11 +48,11 @@ func clearValues(parameter string) {
 }
 
 func clearAllValues() {
-	viper.GetViper().Set("host", "http://127.0.0.1")
-	viper.GetViper().Set("path", "")
-	viper.GetViper().Set("port", 8000)
-	viper.GetViper().Set("method", "GET")
-	viper.GetViper().Set("body", "")
+	viper.GetViper().Set("host", defaultValues.Host)
+	viper.GetViper().Set("path", defaultValues.Path)
+	viper.GetViper().Set("port", defaultValues.Port)
+	viper.GetViper().Set("method", defaultValues.Method)
+	viper.GetViper().Set("body", defaultValues.Body)
 	fmt.Fprintln(rootCmd.OutOrStdout(), titleStyle.Render("All values cleared"))
 }
 
