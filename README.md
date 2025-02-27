@@ -57,3 +57,9 @@ gato send
 <p align="center">
   <img src="https://github.com/user-attachments/assets/1cfcb045-b4da-4546-9ce9-4d9a638be93c", alt="Response" />
 </p>
+
+<h1></h1>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5c1d6653-690d-47e5-9917-a60902738241", width="150", height="150", alt="Gato Logo" /> 
+</p>
