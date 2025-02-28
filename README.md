@@ -17,8 +17,10 @@ HTTP Client on terminal, only for requests and responses in JSON
 - [ ] Add tests for every command
 
 ## Commands
-### Set:
-Set the values needed for the HTTP request, this values are:
+### <ins>Set</ins>:
+Set the values needed for the HTTP request
+
+#### Flags:
 
 - **Host (-H)** The host, default: localhost
 
@@ -30,18 +32,30 @@ Set the values needed for the HTTP request, this values are:
 
 - **Body (-B)** File to use as json body, default None
 
-### Check:
+#### Set yaml:
+With the command set yaml <yaml_file> you can add all the request values using a yaml file with the request values setted
+
+Example
+``` yaml
+host: http://localhost
+path: api/storage
+port: 8080
+method: GET
+body: body.json
+```
+
+### <ins>Check</ins>:
 Displays the current values of the HTTP request.
 
 If used without arguments, it lists all set values, if a specific parameter name is provided as an argument, it returns only the value for that parameter.
 
-### Clear:
+### <ins>Clear</ins>:
 Restore the values of the HTTP request to the values of the default.yaml provided.
 
 If used without arguments, it restore all set values, if a specific parameter name is provided as an argument, it restore only the value for that parameter.
 
 
-### Send:
+### <ins>Send</ins>:
 Send the HTTP request with the values that were set.
 
 ## Files
