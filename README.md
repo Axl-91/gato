@@ -10,7 +10,7 @@ HTTP Client on terminal, only for requests and responses in JSON
 - [x] Show values (check command)
 - [x] Clear values
 - [x] Read file for json body
-- [ ] POST request
+- [x] POST request
 - [ ] Add Authentication
 - [ ] Refactor commands
 - [ ] Add command to get values directly from yaml file
