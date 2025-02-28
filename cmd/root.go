@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -27,11 +28,14 @@ var defaultValues = defaultJson{}
 var titleStyle = lipgloss.NewStyle().Bold(true).
 	Foreground(lipgloss.Color("#36c7aa"))
 
+// Style for success messages
+var successStyle = lipgloss.NewStyle().Bold(true).
+	Foreground(lipgloss.Color("#3bcc06"))
+
 // Style for error messages
 var errorStyle = lipgloss.NewStyle().Bold(true).
 	Foreground(lipgloss.Color("9"))
 
-// Style to show status (default: background green)
 var statusStyle = lipgloss.NewStyle().Bold(true)
 
 var rootCmd = &cobra.Command{
@@ -60,6 +64,8 @@ func initConfig() {
 
 	_ = viper.ReadInConfig()
 }
+
+// Functions with multiple calls on different files will be here
 
 func parseJsonDefault() error {
 	file, err := os.Open("default.json")
@@ -120,4 +126,31 @@ func extractParameter(args []string) string {
 	} else {
 		return strings.ToLower(args[0])
 	}
+}
+
+func showValues(parameter string) {
+	switch parameter {
+	case "host":
+		printTitledValue("Host:", viper.GetViper().GetString("host"))
+	case "port":
+		portStr := strconv.Itoa(viper.GetViper().GetInt("port"))
+		printTitledValue("Port:", portStr)
+	case "path":
+		printTitledValue("Path:", viper.GetViper().GetString("path"))
+	case "method":
+		printTitledValue("Method:", viper.GetViper().GetString("method"))
+	case "body":
+		printTitledValue("Body:", viper.GetViper().GetString("body"))
+	case "":
+		showAllValues()
+	}
+}
+
+func showAllValues() {
+	printTitledValue("Host:", viper.GetViper().GetString("host"))
+	portStr := strconv.Itoa(viper.GetViper().GetInt("port"))
+	printTitledValue("Port:", portStr)
+	printTitledValue("Path:", viper.GetViper().GetString("path"))
+	printTitledValue("Method:", viper.GetViper().GetString("method"))
+	printTitledValue("Body:", viper.GetViper().GetString("body"))
 }
