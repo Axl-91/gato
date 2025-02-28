@@ -73,7 +73,7 @@ body:
 
 ### default.yaml
 
-We'll use default.yaml to have the default parameters set in case we need to clear data.
+We'll use default.json to have the default parameters set in case we need to clear data.
 
 ``` json
 {
