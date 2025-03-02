@@ -1,5 +1,5 @@
-host: ""
-path: ""
-port: 0
-method: ""
 body: ""
+host: http://127.0.0.1
+method: GET
+path: ""
+port: 8000
