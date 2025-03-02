@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCheckCommand(t *testing.T) {
+func TestClearCommand(t *testing.T) {
 	defaultValues := []string{"http://127.0.0.1", "", "8000", "GET", ""}
 	newValues := []string{"http://google.com", "/api/storage", "4000", "POST", "body.json"}
 
@@ -18,12 +18,13 @@ func TestCheckCommand(t *testing.T) {
 	setValues(newValues[0], newValues[1], newPort, newValues[3], newValues[4])
 	checkValues(t, newValues)
 
-	// Restore default values with the clear commnad
+	// I'll use the clear command to restore all the values
 	rootCmd.SetArgs([]string{"clear"})
 	_ = rootCmd.Execute()
 
-	// Now we check that the values are the default ones again
+	// Check all values are the default ones
 	checkValues(t, defaultValues)
 
-	// TODO: test check command with every parameter.
+	// TODO: test clear command with every parameter.
+	// The clear should only change that value.
 }
