@@ -12,7 +12,7 @@ var checkCmd = &cobra.Command{
 	Long:  `Show all the values (Host, Port, Path, Method and Body) for the request`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 1 {
-			fmt.Fprintln(rootCmd.OutOrStderr(), "Invalid amount of parameter, 1 or none expected")
+			fmt.Fprintln(rootCmd.OutOrStderr(), "Invalid amount of parameters, 1 or none expected")
 			return
 		}
 

@@ -1,11 +1,61 @@
 package cmd
 
 import (
+	"bytes"
 	"strconv"
+	"strings"
 	"testing"
 )
 
 func TestCheckCommand(t *testing.T) {
+	testCheckWithInvalidArgs(t)
+	testCheckShowsAllValues(t)
+
+	// TODO: test check command with every parameter.
+	// testCheckShowIndividualValue(t)
+}
+
+// Check for invalid amount of args
+func testCheckWithInvalidArgs(t *testing.T) {
+	testCheckWithInvalidAmount(t)
+	testCheckWithInvalidMethod(t)
+}
+
+func testCheckWithInvalidAmount(t *testing.T) {
+	var buf bytes.Buffer
+	rootCmd.SetOut(&buf)
+	rootCmd.SetArgs([]string{"check", "port", "another"})
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Error executing check command: %v", err)
+	}
+	output := buf.String()
+	expectedMsg := "Invalid amount of parameters"
+
+	if !strings.Contains(output, expectedMsg) {
+		t.Errorf("Expected output to contain %q but got %q", expectedMsg, output)
+	}
+}
+
+func testCheckWithInvalidMethod(t *testing.T) {
+	var buf bytes.Buffer
+	rootCmd.SetOut(&buf)
+	rootCmd.SetArgs([]string{"check", "invalid"})
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Error executing check command: %v", err)
+	}
+	output := buf.String()
+
+	if len(output) > 0 {
+		t.Errorf("Expected empty response, instead got: %s", output)
+	}
+}
+
+// Check with none args shows all values of request
+func testCheckShowsAllValues(t *testing.T) {
 	defaultValues := []string{"http://127.0.0.1", "", "8000", "GET", ""}
 	newValues := []string{"http://google.com", "/api/storage", "4000", "POST", "body.json"}
 
@@ -24,6 +74,4 @@ func TestCheckCommand(t *testing.T) {
 
 	// Now we check that the values are the default ones again
 	checkValues(t, defaultValues)
-
-	// TODO: test check command with every parameter.
 }

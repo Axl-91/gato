@@ -1,11 +1,60 @@
 package cmd
 
 import (
+	"bytes"
 	"strconv"
+	"strings"
 	"testing"
 )
 
 func TestClearCommand(t *testing.T) {
+	testClearWithInvalidArgs(t)
+	testClearAllValues(t)
+
+	// TODO: test clear command with parameters.
+	// testClearWithParameter(t)
+}
+
+// Check for invalid amount of args
+func testClearWithInvalidArgs(t *testing.T) {
+	testClearWithInvalidAmount(t)
+	testClearWithInvalidMethod(t)
+}
+
+func testClearWithInvalidAmount(t *testing.T) {
+	var buf bytes.Buffer
+	rootCmd.SetOut(&buf)
+	rootCmd.SetArgs([]string{"clear", "port", "another"})
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Error executing clear command: %v", err)
+	}
+	output := buf.String()
+	expectedMsg := "Invalid amount of parameters"
+
+	if !strings.Contains(output, expectedMsg) {
+		t.Errorf("Expected output to contain %q but got %q", expectedMsg, output)
+	}
+}
+
+func testClearWithInvalidMethod(t *testing.T) {
+	var buf bytes.Buffer
+	rootCmd.SetOut(&buf)
+	rootCmd.SetArgs([]string{"clear", "invalid"})
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Error executing clear command: %v", err)
+	}
+	output := buf.String()
+
+	if len(output) > 0 {
+		t.Errorf("Expected empty response, instead got: %s", output)
+	}
+}
+
+func testClearAllValues(t *testing.T) {
 	defaultValues := []string{"http://127.0.0.1", "", "8000", "GET", ""}
 	newValues := []string{"http://google.com", "/api/storage", "4000", "POST", "body.json"}
 
@@ -24,7 +73,4 @@ func TestClearCommand(t *testing.T) {
 
 	// Check all values are the default ones
 	checkValues(t, defaultValues)
-
-	// TODO: test clear command with every parameter.
-	// The clear should only change that value.
 }
