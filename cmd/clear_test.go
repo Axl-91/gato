@@ -61,6 +61,8 @@ func testClearAllValues(t *testing.T) {
 	newPort, _ := strconv.Atoi(newValues[2])
 
 	// Check that the values are the default ones.
+	rootCmd.SetArgs([]string{"clear"})
+	_ = rootCmd.Execute()
 	checkValues(t, defaultValues)
 
 	// Change the values and use check command to validate they were changed

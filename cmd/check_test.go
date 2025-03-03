@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 func TestCheckCommand(t *testing.T) {
@@ -12,7 +15,7 @@ func TestCheckCommand(t *testing.T) {
 	testCheckShowsAllValues(t)
 
 	// TODO: test check command with every parameter.
-	// testCheckShowIndividualValue(t)
+	testCheckShowIndividualValue(t)
 }
 
 // Check for invalid amount of args
@@ -62,6 +65,8 @@ func testCheckShowsAllValues(t *testing.T) {
 	newPort, _ := strconv.Atoi(newValues[2])
 
 	// Check that the values are the default ones.
+	rootCmd.SetArgs([]string{"clear"})
+	_ = rootCmd.Execute()
 	checkValues(t, defaultValues)
 
 	// Change the values and use check command to validate they were changed
@@ -74,4 +79,40 @@ func testCheckShowsAllValues(t *testing.T) {
 
 	// Now we check that the values are the default ones again
 	checkValues(t, defaultValues)
+}
+
+func testCheckShowIndividualValue(t *testing.T) {
+	var buffer bytes.Buffer
+
+	// Test host
+	defaultHost := "http://127.0.0.1"
+	newHost := "http://google.com"
+
+	rootCmd.SetOut(&buffer)
+	rootCmd.SetArgs([]string{"check", "host"})
+	_ = rootCmd.Execute()
+
+	response := buffer.String()
+	expectedResponse := fmt.Sprintf("Host: %s\n", defaultHost)
+
+	if response != expectedResponse {
+		t.Errorf("Expected '%s', instead got: '%s'", response, expectedResponse)
+	}
+
+	// Clear buffer
+	buffer.Truncate(0)
+
+	viper.GetViper().Set("host", newHost)
+	_ = viper.GetViper().WriteConfig()
+
+	rootCmd.SetArgs([]string{"check", "host"})
+	_ = rootCmd.Execute()
+
+	response = buffer.String()
+	expectedResponse = fmt.Sprintf("Host: %s\n", newHost)
+
+	if response != expectedResponse {
+		t.Errorf("Expected '%s', instead got: '%s'", response, expectedResponse)
+	}
+
 }
