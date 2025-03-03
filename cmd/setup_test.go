@@ -11,7 +11,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	if err := os.Chdir(".."); err != nil {
+	if err := os.Chdir("../test"); err != nil {
 		fmt.Println("Failed to change directory:", err)
 		os.Exit(1)
 	}

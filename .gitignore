@@ -1,2 +1,6 @@
 *.yaml
 *.json
+!gato.yaml
+!test/gato.yaml
+!default.json
+!test/default.json
