@@ -64,11 +64,11 @@ Send the HTTP request with the values that were set.
 We'll use gato.yaml to save the values that were set for the HTTP requests.
 
 ``` yaml
-host: 
-path:
-port: 
-method:
-body:
+host: http://127.0.0.1
+path: ""
+port: 8000
+method: GET
+body: ""
 ```
 
 ### default.yaml
