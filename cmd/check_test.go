@@ -27,17 +27,14 @@ func testCheckWithInvalidArgs(t *testing.T) {
 func testCheckWithInvalidAmount(t *testing.T) {
 	var buf bytes.Buffer
 	rootCmd.SetOut(&buf)
+	rootCmd.SetErr(&buf)
 	rootCmd.SetArgs([]string{"check", "port", "another"})
 
-	err := rootCmd.Execute()
-	if err != nil {
-		t.Fatalf("Error executing check command: %v", err)
-	}
-	output := buf.String()
-	expectedMsg := "Invalid amount of parameters"
+	_ = rootCmd.Execute()
+	expectedMsg := "accepts 0 arg(s), received 1"
 
-	if !strings.Contains(output, expectedMsg) {
-		t.Errorf("Expected output to contain %q but got %q", expectedMsg, output)
+	if !strings.Contains(buf.String(), expectedMsg) {
+		t.Errorf("Expected output to contain %q but got %q", expectedMsg, buf.String())
 	}
 }
 

@@ -1,5 +1,5 @@
-body: ""
-host: http://127.0.0.1
-method: GET
-path: ""
-port: 8000
+body: body.json
+host: http://google.com
+method: POST
+path: /api/storage
+port: 4000

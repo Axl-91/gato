@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
@@ -117,32 +116,6 @@ func getValueString(value interface{}) string {
 		return fmt.Sprintf("%v", v)
 	default:
 		return fmt.Sprintf("%s", v)
-	}
-}
-
-func extractParameter(args []string) string {
-	if len(args) == 0 {
-		return ""
-	} else {
-		return strings.ToLower(args[0])
-	}
-}
-
-func showValues(parameter string) {
-	switch parameter {
-	case "host":
-		printTitledValue("Host:", viper.GetViper().GetString("host"))
-	case "port":
-		portStr := strconv.Itoa(viper.GetViper().GetInt("port"))
-		printTitledValue("Port:", portStr)
-	case "path":
-		printTitledValue("Path:", viper.GetViper().GetString("path"))
-	case "method":
-		printTitledValue("Method:", viper.GetViper().GetString("method"))
-	case "body":
-		printTitledValue("Body:", viper.GetViper().GetString("body"))
-	case "":
-		showAllValues()
 	}
 }
 

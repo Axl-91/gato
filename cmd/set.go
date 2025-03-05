@@ -32,7 +32,7 @@ var setCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		setRequestValues(host, path, port, method, body)
 		fmt.Fprintln(rootCmd.OutOrStderr(), successStyle.Render("Value/s changed succesfully:"))
-		showValues("")
+		showAllValues()
 	},
 }
 
@@ -57,7 +57,7 @@ var yamlCmd = &cobra.Command{
 		}
 		setRequestValues(yamlFile.Host, yamlFile.Path, yamlFile.Port, yamlFile.Method, yamlFile.Body)
 		fmt.Fprintln(rootCmd.OutOrStderr(), successStyle.Render("Value/s changed succesfully:"))
-		showValues("")
+		showAllValues()
 	},
 }
 

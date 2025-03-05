@@ -14,37 +14,66 @@ var clearCmd = &cobra.Command{
 	Short: "Clear all values and restore them to defaults",
 	Long:  `Clear all values and restore them to the default ones`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) > 1 {
-			fmt.Fprintln(rootCmd.OutOrStderr(), "Invalid amount of parameters, 1 or none expected")
-			return
+		if len(args) == 0 {
+			clearAllValues()
 		}
-		parameter := extractParameter(args)
-		clearValues(parameter)
 	},
 }
 
-func clearValues(parameter string) {
-	switch parameter {
-	case "host":
+var clearHostCmd = &cobra.Command{
+	Use:   "host",
+	Short: "Clear the host setted for the HTTP request",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
 		viper.GetViper().Set("host", defaultValues.Host)
 		printTitledValue("Host cleared to:", defaultValues.Host)
-	case "port":
+		_ = viper.GetViper().WriteConfig()
+	},
+}
+
+var clearPathCmd = &cobra.Command{
+	Use:   "path",
+	Short: "Clear the path setted for the HTTP request",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
+		viper.GetViper().Set("path", defaultValues.Path)
+		printTitledValue("Path cleared to:", defaultValues.Path)
+		_ = viper.GetViper().WriteConfig()
+	},
+}
+
+var clearPortCmd = &cobra.Command{
+	Use:   "port",
+	Short: "Clear the port setted for the HTTP request",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
 		viper.GetViper().Set("port", defaultValues.Port)
 		portStr := strconv.Itoa(int(defaultValues.Port))
 		printTitledValue("Port cleared to:", portStr)
-	case "path":
-		viper.GetViper().Set("path", defaultValues.Path)
-		printTitledValue("Path cleared to:", defaultValues.Path)
-	case "method":
+		_ = viper.GetViper().WriteConfig()
+	},
+}
+
+var clearMethodCmd = &cobra.Command{
+	Use:   "method",
+	Short: "Clear the method setted for the HTTP request",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
 		viper.GetViper().Set("method", defaultValues.Method)
 		printTitledValue("Method cleared to:", defaultValues.Method)
-	case "body":
+		_ = viper.GetViper().WriteConfig()
+	},
+}
+
+var clearBodyCmd = &cobra.Command{
+	Use:   "body",
+	Short: "Clear the body setted for the HTTP request",
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
 		viper.GetViper().Set("body", defaultValues.Body)
 		printTitledValue("Body cleared to:", defaultValues.Body)
-	case "":
-		clearAllValues()
-	}
-	_ = viper.GetViper().WriteConfig()
+		_ = viper.GetViper().WriteConfig()
+	},
 }
 
 func clearAllValues() {
@@ -58,4 +87,9 @@ func clearAllValues() {
 
 func init() {
 	rootCmd.AddCommand(clearCmd)
+	clearCmd.AddCommand(clearHostCmd)
+	clearCmd.AddCommand(clearPathCmd)
+	clearCmd.AddCommand(clearPortCmd)
+	clearCmd.AddCommand(clearMethodCmd)
+	clearCmd.AddCommand(clearBodyCmd)
 }
