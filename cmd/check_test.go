@@ -14,8 +14,11 @@ func TestCheckCommand(t *testing.T) {
 	testCheckWithInvalidArgs(t)
 	testCheckShowsAllValues(t)
 
-	// TODO: test check command with every parameter.
-	testCheckShowIndividualValue(t)
+	testCheckIndividualValue(t, "host", "http://127.0.0.1", "http://google.com")
+	testCheckIndividualValue(t, "path", "None", "api/storage")
+	testCheckIndividualValue(t, "port", "8000", "4000")
+	testCheckIndividualValue(t, "method", "GET", "POST")
+	testCheckIndividualValue(t, "body", "None", "body.json")
 }
 
 // Check for invalid amount of args
@@ -78,38 +81,40 @@ func testCheckShowsAllValues(t *testing.T) {
 	checkValues(t, defaultValues)
 }
 
-func testCheckShowIndividualValue(t *testing.T) {
+func testCheckIndividualValue(t *testing.T, value string, defaultVal string, newVal string) {
 	var buffer bytes.Buffer
 
-	// Test host
-	defaultHost := "http://127.0.0.1"
-	newHost := "http://google.com"
-
+	// Check the value is default
 	rootCmd.SetOut(&buffer)
-	rootCmd.SetArgs([]string{"check", "host"})
+	rootCmd.SetArgs([]string{"check", value})
 	_ = rootCmd.Execute()
 
 	response := buffer.String()
-	expectedResponse := fmt.Sprintf("Host: %s\n", defaultHost)
+	expectedResponse := fmt.Sprintf(": %s\n", defaultVal)
 
-	if response != expectedResponse {
+	if !strings.Contains(response, expectedResponse) {
 		t.Errorf("Expected '%s', instead got: '%s'", response, expectedResponse)
 	}
 
 	// Clear buffer
 	buffer.Truncate(0)
 
-	viper.GetViper().Set("host", newHost)
+	// Change value to new one
+	viper.GetViper().Set(value, newVal)
 	_ = viper.GetViper().WriteConfig()
 
-	rootCmd.SetArgs([]string{"check", "host"})
+	// Check the value is changed
+	rootCmd.SetArgs([]string{"check", value})
 	_ = rootCmd.Execute()
 
 	response = buffer.String()
-	expectedResponse = fmt.Sprintf("Host: %s\n", newHost)
+	expectedResponse = fmt.Sprintf(": %s\n", newVal)
 
-	if response != expectedResponse {
+	if !strings.Contains(response, expectedResponse) {
 		t.Errorf("Expected '%s', instead got: '%s'", response, expectedResponse)
 	}
 
+	// Restore default values with the clear commnad
+	rootCmd.SetArgs([]string{"clear", value})
+	_ = rootCmd.Execute()
 }
